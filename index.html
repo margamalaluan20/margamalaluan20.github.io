@@ -379,17 +379,6 @@ body.dark-mode .awards-overlay-aside {
     transition: transform 0.3s ease !important;
 }
 
-.row.g-3 {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.bento-card {
-    height: 100%; 
-    display: flex;
-    flex-direction: column;
-}
-
 
     </style>
     
@@ -397,7 +386,7 @@ body.dark-mode .awards-overlay-aside {
 <body class="bg-body-tertiary">
 
     <nav class="navbar navbar-expand-lg bg-body sticky-top shadow-sm">
-    <div class="container-fluid px-3">
+    <div class="container-fluid px-4">
         <a class="navbar-brand fw-bold" href="#">MAGI</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -410,6 +399,7 @@ body.dark-mode .awards-overlay-aside {
                 <li class="nav-item"><a class="nav-link" href="#experience" onclick="closeSecondPage()">Experience</a></li>
                 <li class="nav-item"><a class="nav-link" href="#projects" onclick="closeSecondPage()">Projects</a></li>
                 <li class="nav-item"><a class="nav-link" href="#certifications" onclick="closeSecondPage()">Certifications</a></li>
+                <li class="nav-item"><a class="nav-link" href="#awards" onclick="closeSecondPage()">Awards</a></li>
                 <li class="nav-item"><a class="nav-link" href="#contacts" onclick="closeSecondPage()">Contacts</a></li>
             </ul>
             <button class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold" onclick="toggleTheme()">
@@ -423,31 +413,37 @@ body.dark-mode .awards-overlay-aside {
         
         <div id="main-dashboard" class="d-flex flex-column gap-4">
             
-            <div class="row g-3 position-relative">
+            <div class="row g-4 position-relative">
 
+    <!-- PROFILE CARD -->
     <div class="col-lg-12">
-    <div class="card bento-card p-4 h-100">
-        <div class="d-flex align-items-sm-center gap-3 flex-column flex-sm-row h-100">
-            <div class="profile-img-wrapper flex-shrink-0 mx-auto mx-sm-0">
-                <img src="assets/profile-pictures/light mode profile pic.png" alt="Marga Light" class="profile-pic light-pic">
-                <img src="assets/profile-pictures/Dark mode profile pic.jpg" alt="Marga Dark" class="profile-pic dark-pic">
-            </div>
-            <div class="text-center text-sm-start flex-grow-1">
-                <h1 class="h3 fw-bold mb-1">Marga Malaluan (MAGI)</h1>
-                <p class="text-muted mb-2"><i class="bi bi-geo-alt-fill me-1"></i> Ibaan, Batangas, Philippines</p>
-                <p class="fw-semibold mb-3">DIT Student / ESL Tutor / Client Support Trainee</p>
-                <div class="d-flex gap-2 flex-wrap justify-content-center justify-content-sm-start">
-                    <a href="tel:+639166623740" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">
-                        <i class="bi bi-telephone-fill me-2"></i> Call
-                    </a>
-                    <a href="mailto:margamalaluan20@gmail.com" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">
-                        <i class="bi bi-envelope-fill me-2"></i> Email
-                    </a>
+        <div class="card bento-card p-4 h-100">
+            <div class="d-flex align-items-sm-center gap-4 flex-column flex-sm-row h-100">
+                <div class="profile-img-wrapper flex-shrink-0 mx-auto mx-sm-0">
+                    <img src="assets/profile-pictures/light mode profile pic.png" alt="Marga Light" class="profile-pic light-pic">
+                    <img src="assets/profile-pictures/Dark mode profile pic.jpg" alt="Marga Dark" class="profile-pic dark-pic">
+                </div>
+                <div class="text-center text-sm-start flex-grow-1">
+                    <h1 class="h3 fw-bold mb-1">Marga Malaluan (MAGI)</h1>
+                    <p class="text-muted mb-2"><i class="bi bi-geo-alt-fill me-1"></i> Ibaan, Batangas, Philippines</p>
+                    <p class="fw-semibold mb-3">DIT Student / ESL Tutor / Client Support Trainee</p>
+                    <div class="d-flex gap-2 flex-wrap justify-content-center justify-content-sm-start">
+                        <a href="tel:+639166623740" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-telephone-fill me-2"></i> Call
+                        </a>
+                        <a href="mailto:margamalaluan20@gmail.com" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-envelope-fill me-2"></i> Email
+                        </a>  
                 </div>
             </div>
         </div>
     </div>
+
+    
 </div>
+
+
+
             <div class="row g-4">
                 <div class="col-lg-6">
                     <div class="card bento-card h-100" id="about">
