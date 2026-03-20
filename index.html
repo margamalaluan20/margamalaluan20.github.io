@@ -433,7 +433,50 @@ body.dark-mode .awards-overlay-aside {
                         </a>
                         <a href="mailto:margamalaluan20@gmail.com" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">
                             <i class="bi bi-envelope-fill me-2"></i> Email
-                        </a>  
+                        </a>
+                    </div>
+                    <aside></aside>
+                    <div class="position-absolute top-0 end-0 d-none d-md-block" style="z-index: 1000;">
+    <div class="d-flex align-items-stretch shadow-sm" style="border-radius: 8px; overflow: hidden; height: 40px;">
+        
+        
+        <div class="d-flex align-items-center text-white px-3" 
+             style="background: linear-gradient(135deg, rgb(64, 111, 205) 0%, rgb(53, 53, 224) 50%, rgb(4, 57, 204) 100%); 
+                    font-size: 10px; font-weight: 600; gap: 8px; white-space: nowrap; text-transform: uppercase;">
+            <svg fill="currentColor" viewBox="0 0 512 512" style="width: 14px; height: 14px;">
+                <path d="M476.624,55.698C468.257,22.9,440.129,0,408.219,0c-0.005,0-0.012,0-0.017,0h-40.814H144.609H103.8 c-0.006,0-0.011,0-0.017,0c-31.91,0-60.039,22.902-68.406,55.696c-4.265,16.718-5.249,43.19,14.293,74.356 c14.927,23.808,39.204,45.759,72.2,65.384c4.091,62.185,50.632,112.966,110.857,123.567v50.975h-72.204 c-12.853,0-23.273,10.418-23.273,23.273v95.476c0,12.851,10.42,23.273,23.273,23.273h190.954 c12.853,0,23.273-10.422,23.273-23.273v-95.476c0-12.854-10.42-23.273-23.273-23.273h-72.204v-50.933 c60.38-10.512,107.061-61.412,111.096-123.75c32.875-19.588,57.069-41.491,71.962-65.243 C481.873,98.887,480.889,72.417,476.624,55.698z M80.476,67.204c3.463-13.565,14.344-20.658,23.315-20.658h0.005h17.574 l0.13,92.639C85.513,111.52,75.944,84.973,80.476,67.204z M390.662,139.062V46.545h17.548h0.005c8.965,0,19.85,7.095,23.312,20.66 C436.05,84.947,426.516,111.441,390.662,139.062z"></path>
+            </svg>
+            Second Place MYA AI Infomercial
+        </div>
+
+        <button class="btn border-0 text-white px-2 d-flex align-items-center justify-content-center collapsed" 
+                type="button" data-bs-toggle="collapse" data-bs-target="#margaAwards" aria-expanded="false" 
+                style="background: rgb(5, 69, 198); width: 32px;">
+            <i class="bi bi-chevron-down" style="font-size: 12px;"></i>
+            </button>
+            
+        </button>
+    </div>
+
+    <div class="collapse position-absolute end-0 mt-2" id="margaAwards" style="min-width: 350px;">
+        <div class="bg-white border rounded shadow-lg p-3" style="max-height: 300px; overflow-y: auto;">
+            <ul class="list-unstyled mb-0" style="font-size: 12px; color: #333; text-align: left;">
+                <li class="mb-2 pb-1 border-bottom"><b>Fellow MYA Secretariat Committee Member</b></li>
+                <li class="mb-2 pb-1 border-bottom"><b>MYA Program EmpowEd Committee Member</b></li>
+                <li class="mb-2 pb-1 border-bottom"><b>Intl. Ambassador Rep - Bangkok, Thailand 2023</b></li>
+                <li class="mb-2 pb-1 border-bottom"><b>MYA Fellow Qualifier (2023-2024)</b></li>
+                <li class="mb-2 pb-1 border-bottom"><b>MYA Capstone Mentor - Batch 2</b></li>
+                <li class="mb-2 pb-1 border-bottom"><b>MYA Batch 1 Graduates (2022-2023)</b></li>
+                <li class="mb-0"><b>Third Place Capstone [Region 4A]</b></li>
+            </ul>
+        <div class="text-center text-sm-start flex-grow-1 position-relative"> 
+    
+    </div>
+        </aside>
+        </div>
+    </div>
+</div>
+                    
                 </div>
             </div>
         </div>
@@ -892,8 +935,6 @@ I am an adaptable problem-solver with a strong foundation in IT, bringing excell
         <p class="text-muted small mb-0">&copy; 2026 Marga Malaluan. All rights reserved.</p>
     </footer>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
@@ -1030,6 +1071,63 @@ function closeImageViewer() {
     document.body.style.overflow = 'auto';
 }
 </script>
+
+<script>
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                isOpen: false // Naka-close sa umpisa
+            }
+        },
+        methods: {
+            toggleAwards() {
+                this.isOpen = !this.isOpen; // Pag clinick, mag-o-opposite state (Close function)
+            }
+        }
+    }).mount('#awards-app');
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const awardsBtn = document.getElementById('awardsToggleBtn');
+    const awardsMenu = document.getElementById('margaAwards');
+    const chevronWrapper = awardsBtn ? awardsBtn.querySelector('.chevron-wrapper') : null;
+
+    if (!awardsBtn || !awardsMenu) return;
+
+ 
+    const bsCollapse = bootstrap.Collapse.getOrCreateInstance(awardsMenu, { toggle: false });
+
+    // Click function
+    awardsBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (awardsMenu.classList.contains('show')) {
+            // CLOSE FUNCTION
+            bsCollapse.hide();
+            if (chevronWrapper) chevronWrapper.style.transform = 'rotate(0deg)';
+        } else {
+            // OPEN FUNCTION
+            bsCollapse.show();
+            if (chevronWrapper) chevronWrapper.style.transform = 'rotate(180deg)';
+        }
+    });
+
+    // Close function
+    document.addEventListener('click', function(event) {
+        if (!awardsBtn.contains(event.target) && !awardsMenu.contains(event.target)) {
+            if (awardsMenu.classList.contains('show')) {
+                bsCollapse.hide();
+                if (chevronWrapper) chevronWrapper.style.transform = 'rotate(0deg)';
+            }
+        }
+    });
+});
+</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
