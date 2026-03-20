@@ -1,6 +1,6 @@
 # 👩‍💻 Margaret Loraine T. Malaluan | Student Portfolio
 
-Welcome to my professional portfolio! This project showcases my journey as a **Diploma in Information Technology** student at the **Polytechnic University of the Philippines**, my technical projects, and my involvement in various activities within the university.
+Welcome to my professional portfolio! This portfolio showcases my journey as a **Diploma in Information Technology** student at the **Polytechnic University of the Philippines**, my technical projects, and my involvement in various activities within the university.
 
 ## 🚀 Live Demo
 You can view the live site here: [margamalaluan20.github.io](https://margamalaluan20.github.io/)
