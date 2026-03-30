@@ -37,7 +37,6 @@ To run this project locally:
 > ### ⚠️ **Important Evaluation Note** ⚠️
 >
 > * **Issue:** **Toggle Button behavior** 🔘
-> * **Good day Sir, pareload "🔄" na lang po if mapindot nyo po'yung toggle button. Hindi po kasi siya nag-o-close sa ngayon. Pasensya na po!** 🙏✨
 > * **Status:** **Under maintenance** 🛠️
 
 ## Created with ❤️ by Marga Malaluan
