@@ -97,43 +97,52 @@
 
       #loader { display: none; color: var(--theme-accent); }
 
-      .video-bg-container {
+      /* YouTube Background Styling */
+.video-bg-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -2;
+    z-index: -2; /* Siguradong nasa likod ng lahat */
     overflow: hidden;
-    background-color: #0a1128; 
+    background-color: #0a1128;
 }
 
-#bgVideo {
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover; 
-    filter: brightness(45%) contrast(110%); 
+.video-bg-container iframe {
     position: absolute;
     top: 50%;
     left: 50%;
+    width: 100vw;
+    height: 100vh;
     transform: translate(-50%, -50%);
+    pointer-events: none; /* Hindi maki-click ang video para 'di ma-pause */
+    filter: brightness(35%) contrast(110%); /* Darkened para mabasa ang text */
 }
 
+/* Aspect Ratio Fix: Para laging puno ang screen sa 16:9 */
+@media (min-aspect-ratio: 16/9) {
+  .video-bg-container iframe {
+    height: 56.25vw;
+  }
+}
+@media (max-aspect-ratio: 16/9) {
+  .video-bg-container iframe {
+    width: 177.78vh;
+  }
+}
 
+/* Glassmorphism Effect para sa Cards */
 .genshin-card {
-    background-color: rgba(22, 36, 71, 0.7) !important;
-    backdrop-filter: blur(10px);
+    background-color: rgba(22, 36, 71, 0.75) !important;
+    backdrop-filter: blur(8px);
     border: 1px solid rgba(0, 180, 216, 0.3);
-    transition: all 0.3s ease;
 }
 
-body {
-    background-color: transparent !important;
-}
-
-.hero {
+.hero, body {
     background: transparent !important;
 }
+
 /* Detail View Styles */
 .detail-container {
     background-color: rgba(22, 36, 71, 0.9);
@@ -229,11 +238,16 @@ body {
   </head>
   <body>
 
+    <body>
+    <!-- YouTube Background Wrapper -->
     <div class="video-bg-container">
-    <video autoplay muted loop playsinline id="bgVideo">
-        <source src="C:\Users\marga\OneDrive\Desktop\GitHub Student Portfolio\margamalaluan20.github.io\WD M01\assets\Genshin Impact 1 Hour Liyue Mix + Animated Background.mp4" type="video/mp4">
-    </video>
-</div>
+        <iframe 
+            src="https://youtu.be/s7gdfHquLzY?si=RyDUPNSG6bM-gx8x" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm py-1">
       <div class="container">
