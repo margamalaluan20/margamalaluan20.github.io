@@ -2,7 +2,9 @@
 <html lang="en">   
   <head>     
     <meta charset="utf-8">     
-    <meta name="viewport" content="width=device-width, initial-scale=1">     
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    
     <title>Genshin Impact Archive</title>          
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">     
@@ -129,8 +131,8 @@
         animation: fadeIn 0.5s ease-in-out;       
       }       
       .detail-img {         
-        width: 250px;         
-        height: 250px;         
+        width: 200px;         
+        height: 200px;         
         object-fit: contain;         
         filter: drop-shadow(0 0 15px var(--theme-accent));         
         animation: float 4s ease-in-out infinite, breathingGlow 4s infinite;       
@@ -454,7 +456,7 @@
           
           let imgHtml = `<img src="${imageUrl}" alt="${displayName}" class="item-icon" onerror="this.onerror=null; this.src='${fallbackUrl}';">`;
           if (res.category === 'domains') {
-            imgHtml = ''; // Remove image for domain search results
+            imgHtml = ''; 
           }
 
           const card = `                     
@@ -476,6 +478,32 @@
         document.getElementById('searchResults').innerHTML = '';         
       }         
       
+      // Inline Live Filter Functions for Categories
+      function filterCategory(containerId) {
+        const input = document.getElementById('categorySearchInput').value.toLowerCase().trim();
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        const cards = container.querySelectorAll('.card-item');
+        let visibleCount = 0;
+        
+        cards.forEach(card => {
+            const name = card.querySelector('.item-name').innerText.toLowerCase();
+            if (name.includes(input)) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+      }
+
+      function clearCategorySearch(containerId) {
+        const input = document.getElementById('categorySearchInput');
+        if (input) input.value = '';
+        filterCategory(containerId);
+      }
+
       async function loadPage(endpoint) {             
         document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));             
         const navElement = document.getElementById(`nav-${endpoint === 'home' ? 'home' : 'search'}`);             
@@ -493,6 +521,8 @@
             for (const cat of categories) {                         
               const response = await fetch(`${baseUrl}/${cat}`);                         
               const items = await response.json();                                                  
+              const dashboardId = `home-dashboard-${cat}`;
+              
               const sectionTitle = `                             
                 <div class="col-12 mt-5 mb-3 d-flex justify-content-between align-items-end border-bottom border-info pb-2">                                 
                   <h2 class="text-accent mb-0 ancient-modern-title" style="text-transform: capitalize;">${cat.replace(/-/g, ' ')}</h2>                                 
@@ -500,25 +530,38 @@
                     View All <i class="bi bi-chevron-double-right"></i>                                 
                   </button>                             
                 </div>                         
+                <div id="${dashboardId}" class="row g-4 w-100 m-0"></div>
               `;                         
               dataGrid.insertAdjacentHTML('beforeend', sectionTitle);                                                  
               items.slice(0, 4).forEach(item => {                             
-                renderCard(cat, item);                         
+                renderCard(cat, item, dashboardId);                         
               });                     
             }                 
           } else {                     
-            const backHeader = `                         
-              <div class="col-12 mb-4 d-flex align-items-center border-bottom border-info pb-3">                             
-                <button class="back-btn me-3" onclick="loadPage('home')">                                 
-                  <i class="bi bi-arrow-left"></i> Back Home                             
-                </button>                             
-                <h2 class="text-accent mb-0 ancient-modern-title" style="text-transform: capitalize;">All ${endpoint.replace(/-/g, ' ')}</h2>                         
+            const dashboardId = `dashboard-${endpoint}`;
+            const dashboardHeader = `                         
+              <div class="col-12 mb-4">                             
+                <div class="d-flex align-items-center border-bottom border-info pb-3 mb-4">                             
+                  <button class="back-btn me-3" onclick="loadPage('home')">                                 
+                    <i class="bi bi-arrow-left"></i> Back Home                             
+                  </button>                             
+                  <h2 class="text-accent mb-0 ancient-modern-title" style="text-transform: capitalize;">All ${endpoint.replace(/-/g, ' ')}</h2>                         
+                </div>
+                
+                <!-- Category Inline Search & Filter -->
+                <div class="input-group input-group-lg shadow-sm" style="background: var(--theme-card); border-radius: 12px; border: 1px solid var(--theme-accent); overflow: hidden;">                         
+                  <span class="input-group-text bg-dark text-info border-0"><i class="bi bi-search"></i></span>
+                  <input type="text" id="categorySearchInput" class="form-control bg-dark text-light border-0" placeholder="Filter ${endpoint.replace(/-/g, ' ')}..." onkeyup="filterCategory('${dashboardId}')">                         
+                  <button class="btn btn-outline-danger px-4" onclick="clearCategorySearch('${dashboardId}')">Clear</button>                     
+                </div>
               </div>                     
+              <div id="${dashboardId}" class="row g-4 w-100 m-0"></div>
             `;                     
-            dataGrid.insertAdjacentHTML('beforeend', backHeader);                     
+            dataGrid.insertAdjacentHTML('beforeend', dashboardHeader);                     
+            
             const response = await fetch(`${baseUrl}/${endpoint}`);                     
             const items = await response.json();                     
-            items.forEach(item => renderCard(endpoint, item));                 
+            items.forEach(item => renderCard(endpoint, item, dashboardId));                 
           }                 
           loader.style.display = 'none';             
         } catch (error) {                 
@@ -528,7 +571,7 @@
         }         
       }         
       
-      function renderCard(endpoint, item) {             
+      function renderCard(endpoint, item, targetContainerId = null) {             
         let displayName = typeof item === 'string' ? item.replace(/-/g, ' ').replace(/ s /g, "'s ") : 'Unknown';             
         let imageUrl = `${baseUrl}/${endpoint}/${item}/icon`;             
         let fallbackUrl = `https://placehold.co/100x100/162447/00b4d8?text=${displayName.split(' ')[0]}`;                           
@@ -542,14 +585,20 @@
         }
 
         const card = `                 
-          <div class="col-6 col-md-4 col-lg-3">                     
+          <div class="col-6 col-md-4 col-lg-3 card-item">                     
             <div class="genshin-card" style="cursor: pointer;" onclick="loadDetails('${endpoint}', '${item}')">                         
               ${imgHtml}                         
               <h3 class="item-name">${displayName}</h3>                     
             </div>                 
           </div>             
         `;             
-        dataGrid.insertAdjacentHTML('beforeend', card);         
+        
+        if (targetContainerId) {
+            const container = document.getElementById(targetContainerId);
+            if (container) container.insertAdjacentHTML('beforeend', card);
+        } else {
+            dataGrid.insertAdjacentHTML('beforeend', card);         
+        }
       }         
       
       async function loadDetails(endpoint, item) {             
@@ -571,29 +620,41 @@
           const imgTag = `<img src="${detailImgUrl}" class="detail-img mb-4" onerror="this.src='${fallbackUrl}'">`;                                           
           
           if (endpoint === 'nations') {                     
+            
+            // Custom lore dictionary to extend the nation description
+            const nationLore = {
+                "Mondstadt": "The city of freedom that lies in the northeast of Teyvat. From amongst mountains and wide-open plains, carefree breezes carry the scent of dandelions—a gift from the Anemo God, Barbatos—across Cider Lake to the island city that sits at the middle of the lake.",
+                "Liyue": "A bountiful harbor that lies in the east of Teyvat. Mountains stand tall and proud alongside the stone forest, that, together with the open plains and meandering rivers, make up Liyue's bountiful landscape, which shows its unique beauty through each of the four seasons.",
+                "Inazuma": "An isolated archipelago far to the east of Teyvat. Overcome endless thunderstorms and set foot on the islands of red maple and cherry blossoms. On winding shores and towering cliffs, you may witness the Eternity pursued by Her Excellency, the Almighty Narukami Ogosho.",
+                "Sumeru": "The city of scholars located in the west-central part of Teyvat. A fantastical nation of both lush rainforests and barren deserts, where countless fruits of wisdom grow and are buried within the Akademiya and beyond.",
+                "Fontaine": "A terrestrial sea in the center of Teyvat. Following the direction of the water currents, traversing the wilderness and the sea of sand, arriving at the origin of all the waters of the continent where justice reigns supreme.",
+                "Natlan": "The Nation of War located in the western part of Teyvat. Across the scorching deserts and past the jagged canyons lies the realm of the Pyro Archon, where tribes clash and forge legends in the heat of battle.",
+                "Snezhnaya": "The northernmost nation of Teyvat, a land of perpetual winter and harsh blizzards. Ruled by the Tsaritsa, it is a technologically advanced region known for its powerful military and the infamous Fatui organization."
+            };
+
+            let loreText = nationLore[data.name] || `The ${data.name} is the home of the ${data.element} element, ruled by the Archon ${data.archon}.`;
+
             detailHtml = `                         
               <div class="col-12">                             
                 <div class="detail-container text-center">                                 
                   ${imgTag}                                 
-                  <h1 class="display-5 fw-bold text-accent ancient-modern-title">${data.name}</h1>                                 
-                  <p class="lead mb-4">The ${data.name} is the home of the ${data.element} element, ruled by the Archon ${data.archon}.</p>                                                                  
+                  <h1 class="display-4 fw-bold text-accent ancient-modern-title">${data.name}</h1>                                 
+                  <p class="lead mb-4 px-md-5 fst-italic">"${loreText}"</p>                                                                  
+                  
                   <div class="mb-4">                                     
                     <a href="https://act.hoyolab.com/ys/app/interactive-map/index.html?lang=en-us" target="_blank" class="btn btn-outline-info rounded-pill px-4 py-2" style="transition: all 0.3s;">                                         
                       <i class="bi bi-map-fill me-2"></i> Open Interactive Map for ${data.name}                                     
                     </a>                                 
                   </div>                                                                  
+                  
                   <div class="row text-start justify-content-center">                                     
-                    <div class="col-md-5">                                         
-                      <div class="p-3 mb-3 rounded bg-dark border-start border-4 border-info">                                             
-                        <p class="mb-1"><span class="stat-label">Government:</span></p>                                             
-                        <p class="mb-0">${data.controlling_entity || 'Unknown'}</p>                                         
-                      </div>                                     
+                    <div class="col-md-5 p-3 rounded bg-dark border-start border-4 border-info m-2 shadow">                                             
+                        <p class="mb-2"><span class="stat-label">Archon:</span> ${data.archon || 'Unknown'}</p>                                             
+                        <p class="mb-0"><span class="stat-label">Element:</span> ${data.element || 'Unknown'}</p>                                         
                     </div>                                     
-                    <div class="col-md-5">                                         
-                      <div class="p-3 mb-3 rounded bg-dark border-start border-4 border-info">                                             
-                        <p class="mb-1"><span class="stat-label">Motto:</span></p>                                             
-                        <p class="mb-0"><em>"${data.motto || 'N/A'}"</em></p>                                         
-                      </div>                                     
+                    <div class="col-md-5 p-3 rounded bg-dark border-start border-4 border-info m-2 shadow">                                             
+                        <p class="mb-2"><span class="stat-label">Government:</span> ${data.controlling_entity || 'Unknown'}</p>                                             
+                        <p class="mb-0"><span class="stat-label">Motto:</span> <em>"${data.motto || 'N/A'}"</em></p>                                         
                     </div>                                 
                   </div>                             
                 </div>                         
@@ -825,7 +886,7 @@
             detailHtml = `<div class="col-12"><div class="detail-container text-center">${imgTag}<h1 class="display-5 fw-bold text-accent ancient-modern-title" style="text-transform: capitalize;">${data.name || displayName}</h1><p class="lead">${data.description || 'Data fetched from the Irminsul tree.'}</p></div></div>`;                 
           }                                  
           
-          detailHtml += `<div class="col-12 text-center mt-4"><button class="back-btn" onclick="loadPage('home')"><i class="bi bi-arrow-left"></i> Back to Archive</button></div>`;                 
+          detailHtml += `<div class="col-12 text-center mt-4"><button class="back-btn" onclick="loadPage('${endpoint}')"><i class="bi bi-arrow-left"></i> Back to ${endpoint.replace(/-/g, ' ')}</button></div>`;                 
           dataGrid.innerHTML = detailHtml;                 
           loader.style.display = 'none';             
         } catch (error) {                 
