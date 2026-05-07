@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">          
     <style>       
       :root {         
-        /* BLUE THEME PALETTE */         
         --theme-dark: #0a1128;                 
         --theme-card: #162447;                
         --theme-accent: #00b4d8;               
@@ -54,9 +53,7 @@
         text-align: center;         
         border-bottom: 1px solid rgba(0, 180, 216, 0.3);         
         background: transparent !important;       
-      }       
-      
-      /* --- SQUARE TILE STYLES --- */
+      }           
       .genshin-card {
           background-color: rgba(22, 36, 71, 0.7) !important;
           backdrop-filter: blur(10px);
@@ -73,7 +70,7 @@
           text-align: center;
       }
       .domain-card {
-          aspect-ratio: auto !important; 
+          aspect-ratio: auto !important;
           min-height: 80px; 
           padding: 1rem 0.8rem !important;
       }
@@ -83,7 +80,7 @@
           box-shadow: 0 8px 20px rgba(0, 180, 216, 0.2);
       }
       .item-icon {
-          width: 95px; 
+          width: 95px;
           height: 95px; 
           object-fit: contain;
           margin-bottom: 1rem; 
@@ -112,8 +109,7 @@
           -webkit-box-orient: vertical;
           overflow: hidden;
       }
-      #loader 
-      { display: none; color: var(--theme-accent); }       
+      #loader { display: none; color: var(--theme-accent); }       
       .video-bg-container {         
         position: fixed;         
         top: 0;         
@@ -133,7 +129,7 @@
         top: 50%;         
         left: 50%;         
         transform: translate(-50%, -50%);       
-      }      
+      }       
       .detail-container {         
         background-color: rgba(22, 36, 71, 0.9);         
         backdrop-filter: blur(15px);         
@@ -245,7 +241,6 @@
         text-shadow: 0 0 30px rgba(144, 224, 239, 0.8);         
         transform: scale(1.02);       
       }
-      /* Custom Scrollbar */
       .custom-scroll::-webkit-scrollbar {
         width: 6px;
       }
@@ -260,7 +255,6 @@
       .custom-scroll::-webkit-scrollbar-thumb:hover {
         background: var(--theme-accent-hover); 
       }
-      
       .no-image-placeholder {
         display: flex;
         align-items: center;
@@ -288,8 +282,7 @@
         font-size: 1.2rem;
         letter-spacing: 1px;
       }
-    </style> 
-
+    </style>   
   </head>   
   <body>     
     <div class="video-bg-container">         
@@ -332,7 +325,7 @@
         <p class="mt-3" style="font-family: 'Montserrat', sans-serif;">Connecting to Irminsul...</p>       
       </div>              
       <div class="row g-4" id="dataGrid">         
-        </div>     
+      </div>     
     </main>          
     
     <footer class="text-center py-4" style="background-color: var(--theme-card); border-top: 1px solid rgba(0, 180, 216, 0.3);">       
@@ -356,6 +349,7 @@
         weapons: { title: "Weapons", sub: "Discover the armaments forged for battle." },             
         artifacts: { title: "Artifacts", sub: "Relics of the past that bestow great power." },             
         consumables: { title: "Consumables", sub: "Dishes and potions to aid your journey." },
+        materials: { title: "Materials", sub: "Resources collected across Teyvat for ascensions and enhancements." },
         elements: { title: "Elements", sub: "The fundamental powers that shape the world." },             
         nations: { title: "Nations", sub: "The seven regions ruled by the Archons." },             
         domains: { title: "Domains", sub: "Ancient ruins holding powerful rewards." },
@@ -363,9 +357,101 @@
         search: { title: "Archive Search", sub: "Search Irminsul for all knowledge."}         
       };         
       
-      // APEX Fetcher for Data
+      let midtermImageMap = {};
+      async function fetchMidtermImages() {
+          try {
+              const targetUrl = 'https://byokuu.github.io/Midterm/HTML/consumables.html';
+              const proxyUrl = 'https://api.allorigins.win/get?url=';
+              const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+              const data = await response.json();
+              const doc = new DOMParser().parseFromString(data.contents, 'text/html');
+              doc.querySelectorAll('img').forEach(img => {
+                  let src = img.getAttribute('src');
+                  if (src) {
+                      let absoluteSrc = src.startsWith('http') ? src : new URL(src, targetUrl).href;
+                      let filename = absoluteSrc.split('/').pop().split('.')[0].toLowerCase().replace(/_/g, '-').replace(/\s+/g, '-');
+                      midtermImageMap[filename] = absoluteSrc;
+                  }
+              });
+          } catch (e) {}
+      }
+
+      function getFallbackUrls(itemId) {
+          let formattedName = itemId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('_');
+          let lowerUnderscore = itemId.replace(/-/g, '_');
+          let urls = [];
+          if (midtermImageMap[itemId]) urls.push(midtermImageMap[itemId]);
+          urls.push(`https://byokuu.github.io/Midterm/HTML/images/${itemId}.png`);
+          urls.push(`https://byokuu.github.io/Midterm/HTML/images/${lowerUnderscore}.png`);
+          urls.push(`https://genshin-impact.fandom.com/wiki/Special:FilePath/Item_${formattedName}.png`);
+          return [...new Set(urls)];
+      }
+
+      window.handleImageFallback = function(img, itemId, isDetail) {
+          let attempt = parseInt(img.getAttribute('data-attempt') || '0');
+          let urls = getFallbackUrls(itemId);
+          if (attempt < urls.length) {
+              img.src = urls[attempt];
+              img.setAttribute('data-attempt', attempt + 1);
+          } else {
+              img.outerHTML = `<div class='no-image-placeholder ${isDetail ? "detail-size" : "icon-size"}'>No Image</div>`;
+          }
+      };
+
+      function flattenMaterials(data, subcat) {
+          let items = [];
+          if (!data) return items;
+          
+          const makeId = (name) => name.toLowerCase().replace(/[']/g, '').replace(/[^a-z0-9]+/g, '-');
+
+          const traverse = (obj, parentKey) => {
+              if (typeof obj === 'string') {
+                  items.push({ id: obj, subcat: subcat, details: { name: obj.replace(/-/g, ' '), description: 'A material from Teyvat.' } });
+                  return;
+              }
+              if (Array.isArray(obj)) {
+                  obj.forEach(v => traverse(v, parentKey));
+                  return;
+              }
+              if (typeof obj === 'object' && obj !== null) {
+                  if (obj.name) {
+                      let id = obj.id || makeId(obj.name);
+                      items.push({ id: id, subcat: subcat, details: obj });
+                  } else {
+                      for (let key in obj) {
+                          traverse(obj[key], key);
+                      }
+                  }
+              }
+          };
+          traverse(data, '');
+          return items;
+      }
+
       async function fetchCategoryItems(cat) {
-          if (cat === 'consumables') {
+          if (cat === 'materials') {
+              const subcats = ['boss-material', 'character-ascension', 'character-experience', 'common-ascension', 'local-specialties', 'talent-book', 'talent-boss', 'weapon-ascension', 'weapon-experience'];
+              let items = [];
+              await Promise.all(subcats.map(async (sub) => {
+                  try {
+                      const res = await fetch(`${baseUrl}/materials/${sub}`);
+                      if (res.ok) {
+                          const data = await res.json();
+                          items = items.concat(flattenMaterials(data, sub));
+                      }
+                  } catch(e) {}
+              }));
+              
+              const unique = [];
+              const map = new Set();
+              for (let item of items) {
+                  if (!map.has(item.id)) {
+                      map.add(item.id);
+                      unique.push(item);
+                  }
+              }
+              return unique;
+          } else if (cat === 'consumables') {
               const [fRes, pRes] = await Promise.all([
                   fetch(`${baseUrl}/consumables/food`).catch(()=>null),
                   fetch(`${baseUrl}/consumables/potions`).catch(()=>null)
@@ -389,7 +475,6 @@
           }
       }
 
-      // APEX Image Resolver for Consumables (Hooks into Fandom Wiki API for missing images)
       function getConsumableImageUrls(itemId) {
           let formattedName = itemId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('_');
           return {
@@ -400,13 +485,11 @@
 
       async function fetchAllData() {             
         if (Object.keys(allDataCache).length > 0) return;              
-        const categories = ['characters', 'weapons', 'artifacts', 'consumables', 'elements', 'nations', 'domains', 'enemies'];             
+        const categories = ['characters', 'weapons', 'artifacts', 'consumables', 'materials', 'elements', 'nations', 'domains', 'enemies'];             
         for (const cat of categories) {                 
           try {                     
             allDataCache[cat] = await fetchCategoryItems(cat);                 
-          } catch (error) {                     
-            console.error("Failed to fetch search data for:", cat);                 
-          }             
+          } catch (error) {}             
         }         
       }         
       
@@ -427,6 +510,7 @@
                 <option value="weapons">Weapons</option>                             
                 <option value="artifacts">Artifacts</option>                             
                 <option value="consumables">Consumables</option>
+                <option value="materials">Materials</option>
                 <option value="elements">Elements</option>                             
                 <option value="nations">Nations</option>                             
                 <option value="domains">Domains</option>
@@ -461,12 +545,13 @@
         if (query === 'weapon') targetCategory = 'weapons';
         if (query === 'artifact') targetCategory = 'artifacts';
         if (query === 'consumable' || query === 'food' || query === 'potion' || query === 'foods' || query === 'potions') targetCategory = 'consumables';
+        if (query === 'material') targetCategory = 'materials';
         if (query === 'element') targetCategory = 'elements';
         if (query === 'nation' || query === 'region' || query === 'regions') targetCategory = 'nations';
         if (query === 'domain') targetCategory = 'domains';
         if (query === 'enemy') targetCategory = 'enemies';
 
-        const validCategories = ['characters', 'weapons', 'artifacts', 'consumables', 'elements', 'nations', 'domains', 'enemies'];
+        const validCategories = ['characters', 'weapons', 'artifacts', 'consumables', 'materials', 'elements', 'nations', 'domains', 'enemies'];
         if (validCategories.includes(targetCategory) && filter === 'all') {
             loadPage(targetCategory);
             return;
@@ -478,8 +563,8 @@
         categoriesToSearch.forEach(cat => {                 
           if (allDataCache[cat]) {                     
             const matches = allDataCache[cat].filter(itemData => {
-                let itemStr = typeof itemData === 'object' ? itemData.id : itemData;
-                return typeof itemStr === 'string' && itemStr.toLowerCase().includes(query);
+                let itemStr = typeof itemData === 'object' ? (itemData.details && itemData.details.name ? itemData.details.name.toLowerCase() : itemData.id) : itemData;
+                return typeof itemStr === 'string' && itemStr.includes(query);
             });                     
             matches.forEach(match => {                         
               results.push({ category: cat, item: match });                     
@@ -496,15 +581,17 @@
           let itemData = res.item;
           let itemStr = typeof itemData === 'object' ? itemData.id : itemData;
 
-          let displayName = itemStr.replace(/-/g, ' ').replace(/ s /g, "'s ");                 
+          let displayName = typeof itemData === 'object' && itemData.details && itemData.details.name 
+              ? itemData.details.name 
+              : (typeof itemStr === 'string' ? itemStr.replace(/-/g, ' ').replace(/ s /g, "'s ") : 'Unknown');                 
+          
           let imageUrl = `${baseUrl}/${res.category}/${itemStr}/icon`;                 
-          let fallbackHtml = `onerror="this.outerHTML='<div class=\\'no-image-placeholder icon-size\\'>No API Image</div>'"`;
+          let fallbackHtml = `onerror="this.outerHTML='<div class=\\'no-image-placeholder icon-size\\'>No Image</div>'"`;
           
           if (res.category === 'artifacts') imageUrl = `${baseUrl}/${res.category}/${itemStr}/flower-of-life`;                 
           if (itemStr === 'glacier-and-snowfield') imageUrl = `https://genshin.jmp.blue/artifacts/blizzard-strayer/flower-of-life`;                                  
           
-          // Apply Apex Consumable Image Logic
-          if (res.category === 'consumables') {
+          if (res.category === 'consumables' || res.category === 'materials') {
               const urls = getConsumableImageUrls(itemStr);
               imageUrl = urls.primary;
               fallbackHtml = `onerror="this.onerror=null; this.src='${urls.secondary}'; this.addEventListener('error', function() { this.outerHTML='<div class=\\'no-image-placeholder icon-size\\'>No Image</div>' });"`;
@@ -512,7 +599,6 @@
 
           let imgHtml = `<img src="${imageUrl}" alt="${displayName}" class="item-icon" ${fallbackHtml}>`;
           
-          // Domain fix for search results
           let domainClass = "";
           if (res.category === 'domains') {
             imgHtml = ''; 
@@ -562,7 +648,8 @@
 
       async function loadPage(endpoint) {             
         document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));             
-        const navElement = document.getElementById(`nav-${endpoint === 'home' ? 'home' : 'search'}`);             
+        let navId = endpoint === 'home' ? 'nav-home' : 'nav-search';
+        const navElement = document.getElementById(navId);             
         if(navElement) navElement.classList.add('active');                               
         
         const titleData = pageInfo[endpoint] || pageInfo['home'];             
@@ -574,7 +661,7 @@
         
         try {                 
           if (endpoint === 'home') {                     
-            const categories = ['characters', 'weapons', 'artifacts', 'consumables', 'elements', 'nations', 'domains', 'enemies'];                                                       
+            const categories = ['characters', 'weapons', 'artifacts', 'consumables', 'materials', 'elements', 'nations', 'domains', 'enemies'];                                                       
             for (const cat of categories) {                         
               const items = await fetchCategoryItems(cat);                                                  
               const dashboardId = `home-dashboard-${cat}`;
@@ -621,7 +708,6 @@
           }                 
           loader.style.display = 'none';             
         } catch (error) {                 
-          console.error("API Error:", error);                 
           loader.style.display = 'none';                 
           dataGrid.innerHTML = `<div class="col-12 text-center text-danger"><p>Failed to connect to the Ley Lines.</p></div>`;             
         }         
@@ -630,16 +716,17 @@
       function renderCard(endpoint, itemData, targetContainerId = null) {             
         let item = typeof itemData === 'object' ? itemData.id : itemData;
         
-        let displayName = typeof item === 'string' ? item.replace(/-/g, ' ').replace(/ s /g, "'s ") : 'Unknown';             
+        let displayName = typeof itemData === 'object' && itemData.details && itemData.details.name 
+            ? itemData.details.name 
+            : (typeof item === 'string' ? item.replace(/-/g, ' ').replace(/ s /g, "'s ") : 'Unknown');             
         
         let imageUrl = `${baseUrl}/${endpoint}/${item}/icon`;             
-        let fallbackHtml = `onerror="this.outerHTML='<div class=\\'no-image-placeholder icon-size\\'>No API Image</div>'"`;
+        let fallbackHtml = `onerror="this.outerHTML='<div class=\\'no-image-placeholder icon-size\\'>No Image</div>'"`;
         
         if (endpoint === 'artifacts') imageUrl = `${baseUrl}/${endpoint}/${item}/flower-of-life`;             
         if (item === 'glacier-and-snowfield') imageUrl = `https://genshin.jmp.blue/artifacts/blizzard-strayer/flower-of-life`;             
         
-        // Apply Apex Consumable Image Logic
-        if (endpoint === 'consumables') {
+        if (endpoint === 'consumables' || endpoint === 'materials') {
             const urls = getConsumableImageUrls(item);
             imageUrl = urls.primary;
             fallbackHtml = `onerror="this.onerror=null; this.src='${urls.secondary}'; this.addEventListener('error', function() { this.outerHTML='<div class=\\'no-image-placeholder icon-size\\'>No Image</div>' });"`;
@@ -647,7 +734,6 @@
 
         let imgHtml = `<img src="${imageUrl}" alt="${displayName}" class="item-icon" ${fallbackHtml}>`;
         
-        // Domain card logic - No icon and special class for fit-to-text
         let domainClass = "";
         if (endpoint === 'domains') {
           imgHtml = ''; 
@@ -671,7 +757,6 @@
         }
       }         
       
-      // FIXED LOAD DETAILS TO SHOW FULL CONSUMABLE DATA & API IMAGES
       async function loadDetails(endpoint, item) {             
         dataGrid.innerHTML = '';             
         loader.style.display = 'block';             
@@ -680,10 +765,23 @@
         try {                 
           let data;
           let detailImgUrl = `${baseUrl}/${endpoint}/${item}/icon`;                 
-          let fallbackDetailHtml = `onerror="this.outerHTML='<div class=\\'no-image-placeholder detail-size\\'>No API Image</div>'"`;
+          let fallbackDetailHtml = `onerror="this.outerHTML='<div class=\\'no-image-placeholder detail-size\\'>No Image</div>'"`;
 
-          if (endpoint === 'consumables') {
-              // Extract the item data safely from the giant dictionary
+          if (endpoint === 'materials') {
+              let cached = allDataCache['materials'] ? allDataCache['materials'].find(m => m.id === item) : null;
+              if (cached && cached.details) {
+                  data = cached.details;
+                  data.materialType = cached.subcat;
+              } else {
+                  throw new Error("Material not found");
+              }
+
+              const urls = getConsumableImageUrls(item);
+              detailImgUrl = urls.primary;
+              fallbackDetailHtml = `onerror="this.onerror=null; this.src='${urls.secondary}'; this.addEventListener('error', function() { this.outerHTML='<div class=\\'no-image-placeholder detail-size\\'>No Image</div>' });"`;
+              if (!data.name) data.name = item.replace(/-/g, ' ');
+
+          } else if (endpoint === 'consumables') {
               const [fRes, pRes] = await Promise.all([
                   fetch(`${baseUrl}/consumables/food`).catch(()=>null),
                   fetch(`${baseUrl}/consumables/potions`).catch(()=>null)
@@ -699,11 +797,9 @@
                   throw new Error("Consumable not found");
               }
 
-              // Apply Apex Consumable Image Logic for Detail View
               const urls = getConsumableImageUrls(item);
               detailImgUrl = urls.primary;
               fallbackDetailHtml = `onerror="this.onerror=null; this.src='${urls.secondary}'; this.addEventListener('error', function() { this.outerHTML='<div class=\\'no-image-placeholder detail-size\\'>No Image</div>' });"`;
-
               if (!data.name) data.name = item.replace(/-/g, ' ');
 
           } else {
@@ -720,7 +816,70 @@
           
           const imgTag = `<img src="${detailImgUrl}" class="detail-img mb-4" ${fallbackDetailHtml}>`;                                           
           
-          if (endpoint === 'consumables') {
+          if (endpoint === 'materials') {
+              
+            let sourceHtml = '';
+            let sourceData = data.source || data.sources || [];
+            if (typeof sourceData === 'string') sourceData = [sourceData];
+
+            if (sourceData.length > 0) {
+                sourceHtml = `<ul class="list-unstyled mb-0 small text-light opacity-75">`;
+                sourceData.forEach(src => {
+                    sourceHtml += `<li><i class="bi bi-caret-right-fill text-info"></i> ${src}</li>`;
+                });
+                sourceHtml += `</ul>`;
+            } else {
+                sourceHtml = `<p class="small text-light opacity-75 mb-0">No specific source data provided.</p>`;
+            }
+
+            let dropLocHtml = '';
+            let dropLocData = data.drop || data.location || [];
+            if (typeof dropLocData === 'string') dropLocData = [dropLocData];
+
+            if (dropLocData.length > 0) {
+                dropLocHtml = `<ul class="list-unstyled mb-0 small text-light opacity-75">`;
+                dropLocData.forEach(dl => {
+                    dropLocHtml += `<li><i class="bi bi-caret-right-fill text-info"></i> ${dl}</li>`;
+                });
+                dropLocHtml += `</ul>`;
+            } else {
+                dropLocHtml = `<p class="small text-light opacity-75 mb-0">Can be found exploring the open world of Teyvat.</p>`;
+            }
+            
+            detailHtml = `
+            <div class="col-12">
+                <div class="detail-container text-center">
+                    ${imgTag}
+                    <h1 class="display-4 fw-bold text-accent ancient-modern-title">${data.name}</h1>
+                    ${data.description ? `<p class="lead mb-4 fst-italic" style="max-width: 800px; margin: 0 auto;">"${data.description}"</p>` : '<p class="lead mb-4 fst-italic" style="max-width: 800px; margin: 0 auto;">"A resource found across Teyvat."</p>'}
+                    
+                    <div class="row mt-4 text-start justify-content-center mb-4">
+                        <div class="col-md-5 col-lg-4 p-3 rounded bg-dark border-start border-4 border-info m-2 shadow">
+                            <p class="mb-2"><span class="stat-label">Category:</span> <span class="text-capitalize">${(data.materialType || 'Material').replace(/-/g, ' ')}</span></p>
+                            <p class="mb-0"><span class="stat-label">Type:</span> ${data.type || 'Resource'}</p>
+                        </div>
+                        <div class="col-md-5 col-lg-4 p-3 rounded bg-dark border-start border-4 border-info m-2 shadow">
+                            <p class="mb-0"><span class="stat-label">Rarity:</span> ${data.rarity ? '⭐'.repeat(data.rarity) : 'Unknown'}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3 justify-content-center text-start">
+                        <div class="col-md-5 col-lg-4 p-3 bg-dark border border-secondary rounded shadow mb-3 mx-2">
+                            <h5 class="text-accent mb-2"><i class="bi bi-box-seam me-2"></i>Primary Source</h5>
+                            ${sourceHtml}
+                        </div>
+                        <div class="col-md-5 col-lg-4 p-3 bg-dark border border-secondary rounded shadow mb-3 mx-2">
+                            <h5 class="text-accent mb-2"><i class="bi bi-geo-alt-fill me-2"></i>Drops & Location</h5>
+                            ${dropLocHtml}
+                            <div class="mt-3 p-2 bg-dark border border-info rounded" style="font-size: 0.8rem;">
+                                <i class="bi bi-info-circle text-info me-1"></i> <span class="text-light opacity-75">Check the Adventurer Handbook or Interactive Map for precise coordinates.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+          } else if (endpoint === 'consumables') {
             
             let recipeData = data.recipe || data.crafting || [];
             let recipeHtml = '';
@@ -818,7 +977,7 @@
                   </div>                                                                  
                   <div class="row mt-4 text-start justify-content-center">                                     
                     <div class="col-md-8 p-3 rounded bg-dark border border-info shadow">                                         
-                      <h5 class="text-accent mb-2"><i class=\"bi bi-gift\"></i> Domain Details</h5>                                         
+                      <h5 class="text-accent mb-2"><i class="bi bi-gift"></i> Domain Details</h5>                                         
                       <p class="mb-1 opacity-75 small">This domain tests your team's strength. Complete it to claim rewards using Original Resin.</p>                                         
                       <p class="mt-3 stat-label">Required Adventure Rank: ${data.recommended_ar || 'Varies'}</p>                                         
                       <p class="stat-label">Recommended Elements: <span class="text-light text-capitalize">${data.recommended_elements && data.recommended_elements.length > 0 ? data.recommended_elements.join(', ') : 'Any'}</span></p>                                     
@@ -956,9 +1115,9 @@
                     <div class="col-md-10 col-lg-8 p-3 bg-dark border border-secondary rounded shadow">
                         <h5 class="text-accent mb-2"><i class="bi bi-box-seam me-2"></i>Ascension Materials</h5>
                         <ul class="list-unstyled mb-0 small text-light opacity-75">
-                            ${data.ascensionMaterial ? `<li><i class=\"bi bi-caret-right-fill text-info\"></i> Weapon Ascension: <span class=\"text-capitalize\">${data.ascensionMaterial.replace(/-/g, ' ')}</span></li>` : ''}
-                            ${data.bossMaterial ? `<li><i class=\"bi bi-caret-right-fill text-info\"></i> Elite Enemy: <span class=\"text-capitalize\">${data.bossMaterial.replace(/-/g, ' ')}</span></li>` : ''}
-                            ${data.itemMaterial ? `<li><i class=\"bi bi-caret-right-fill text-info\"></i> Common Enemy: <span class=\"text-capitalize\">${data.itemMaterial.replace(/-/g, ' ')}</span></li>` : ''}
+                            ${data.ascensionMaterial ? `<li><i class="bi bi-caret-right-fill text-info"></i> Weapon Ascension: <span class="text-capitalize">${data.ascensionMaterial.replace(/-/g, ' ')}</span></li>` : ''}
+                            ${data.bossMaterial ? `<li><i class="bi bi-caret-right-fill text-info"></i> Elite Enemy: <span class="text-capitalize">${data.bossMaterial.replace(/-/g, ' ')}</span></li>` : ''}
+                            ${data.itemMaterial ? `<li><i class="bi bi-caret-right-fill text-info"></i> Common Enemy: <span class="text-capitalize">${data.itemMaterial.replace(/-/g, ' ')}</span></li>` : ''}
                         </ul>
                     </div>
                 </div>`;
@@ -1083,13 +1242,15 @@
           dataGrid.innerHTML = detailHtml;                 
           loader.style.display = 'none';             
         } catch (error) {                 
-          console.error("Detail Fetch Error:", error);                 
           loader.style.display = 'none';                 
           dataGrid.innerHTML = `<div class="col-12 text-center text-danger"><p>Data error.</p><button class="back-btn" onclick="loadPage('home')">Back Home</button></div>`;             
         }         
       }                  
       
-      window.onload = () => loadPage('home');     
+      window.onload = () => {
+          fetchMidtermImages();
+          loadPage('home');
+      };
     </script>   
   </body> 
 </html>
