@@ -161,32 +161,14 @@
             border-radius: 4px;
             object-fit: cover;
             border: 1px solid #444;
-            transition: filter 0.3s ease, border-color 0.3s ease;
+            transition: filter 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
         }
         .horizontal-scroll a img:hover {
             filter: brightness(1.2); 
             border-color: var(--teal-glow);
+            transform: scale(1.03);
         }
-
-        .gallery-nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--bg-card); 
-            border: 1px solid var(--teal-glow);
-            z-index: 1050; 
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--teal-glow);
-        }
-        .gallery-nav-btn:hover { background-color: var(--teal-glow); color: #fff; }
-        .gallery-nav-btn.left-btn { left: 10px; }
-        .gallery-nav-btn.right-btn { right: 10px; }
 
         .view-all-btn {
             cursor: pointer;
@@ -215,12 +197,65 @@
         a:hover { color: var(--text-main); }
         .text-muted { color: #8b9bb4 !important; }
 
-        .image-viewer-overlay {
-            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; cursor: pointer;
+        /* Typing Cursor Animation */
+        .typing-cursor {
+            display: inline-block;
+            color: var(--teal-glow);
+            font-weight: bold;
+            animation: blinkCursor 0.7s infinite;
         }
-        .image-viewer-content { max-width: 90%; max-height: 90%; border-radius: 8px; border: 2px solid var(--teal-glow); }
-        .close-viewer { position: absolute; top: 20px; right: 35px; color: var(--teal-glow); font-size: 40px; cursor: pointer; }
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Image Viewer Overlay & Close Button Styles */
+        .image-viewer-overlay {
+            display: none; 
+            position: fixed; 
+            z-index: 3000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(0,0,0,0.92); 
+            justify-content: center; 
+            align-items: center; 
+            backdrop-filter: blur(5px);
+        }
+        .image-viewer-content { 
+            max-width: 90%; 
+            max-height: 85vh; 
+            border-radius: 10px; 
+            border: 2px solid var(--teal-glow);
+            box-shadow: 0 0 25px rgba(0, 188, 212, 0.5);
+            object-fit: contain;
+        }
+        .close-viewer { 
+            position: absolute; 
+            top: 25px; 
+            right: 35px; 
+            color: #ffffff; 
+            font-size: 45px; 
+            font-weight: bold;
+            cursor: pointer; 
+            line-height: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+            z-index: 3100;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--teal-glow);
+        }
+        .close-viewer:hover {
+            color: var(--teal-glow);
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.8);
+        }
     </style>
 </head>
 <body class="bg-body-tertiary">
@@ -307,54 +342,56 @@
                     </div>
 
                     <!-- RECENT SCHOOL PROJECTS & ACTIVITIES -->
-                    <div class="card bento-card" id="projects-activities">
-                        <div class="card-header bg-transparent d-flex justify-content-between align-items-center pt-3 border-bottom-0 pb-2">
-                            <h5 class="fw-bold text-uppercase mb-0 fs-6">Recent School Projects & Activities</h5>
-                            <span class="fw-bold view-all-btn" onclick="openSecondPage('Recent School Projects & Activities', 'projects-activities-content')">View All &gt;</span>
-                        </div>
-                        <div class="card-body pt-0 small" id="projects-activities-content">
-                            <!-- Projects Subsection -->
-                            <div class="mb-3">
-                                <p class="text-uppercase fw-bold text-muted mb-2" style="font-size: 0.7rem; letter-spacing: 1px;">Projects</p>
-                                <div class="row g-3">
-                                    <div class="col-sm-6">
-                                        <img src="assets/projects-cover-photo/SIP-AND-PULSE.jpg" alt="Sip and Pulse" class="project-img">
-                                        <h6 class="fw-bold mb-1 small">Sip and Pulse Cafe Management</h6>
-                                        <p class="text-muted mb-1" style="font-size: 0.7rem;">Jul 2026 | PUP Sto. Tomas</p>
-                                        <a href="https://github.com/B-A-M-V-A-Tech/final-project-webdev-hci-im.github.io.git" class="text-decoration-none fw-bold" style="font-size: 0.75rem;" target="_blank">View GitHub <i class="bi bi-arrow-right"></i></a>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <img src="assets/projects-cover-photo/Sto-Tomas-NETWORK-ANALYSIS.jpg" alt="Network Analysis" class="project-img">
-                                        <h6 class="fw-bold mb-1 small">Sto. Tomas - Network Plan</h6>
-                                        <p class="text-muted mb-1" style="font-size: 0.7rem;">Jan 2025 | PUP Sto. Tomas</p>
-                                        <a href="https://drive.google.com/file/d/1uFjiEpPRFBMLAxGL6R2KkrGZUWlwEFfZ/view?usp=drive_link" class="text-decoration-none fw-bold" style="font-size: 0.75rem;" target="_blank">View Document <i class="bi bi-arrow-right"></i></a>
-                                    </div>
-                                </div>
+                    <div class="card bento-card flex-grow-1 d-flex flex-column justify-content-between" id="projects-activities">
+                        <div>
+                            <div class="card-header bg-transparent d-flex justify-content-between align-items-center pt-3 border-bottom-0 pb-2">
+                                <h5 class="fw-bold text-uppercase mb-0 fs-6">Recent School Projects & Activities</h5>
+                                <span class="fw-bold view-all-btn" onclick="openSecondPage('Recent School Projects & Activities', 'projects-activities-content')">View All &gt;</span>
                             </div>
-                            
-                            <hr class="border-secondary opacity-25 my-3">
-
-                            <!-- Activities Subsection -->
-                            <div>
-                                <p class="text-uppercase fw-bold text-muted mb-2" style="font-size: 0.7rem; letter-spacing: 1px;">Activities</p>
-                                <div class="row g-3">
-                                    <div class="col-sm-6">
-                                        <div class="card h-100 border-0 rounded-3 shadow-sm bento-card">
-                                            <img src="assets/activities-cover-photo/A02.png" style="width: 100%; height: 90px; object-fit: cover;">
-                                            <div class="card-body p-2">
-                                                <h6 class="fw-bold mb-1 small">Activity A02</h6>
-                                                <p class="small mb-1 text-muted" style="font-size: 0.65rem;">Samsung Galaxy S25 Ultra Website</p>
-                                                <a href="A02/index.html" class="text-decoration-none fw-bold" style="font-size: 0.7rem;" target="_blank">View <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                            <div class="card-body pt-0 small" id="projects-activities-content">
+                                <!-- Projects Subsection -->
+                                <div class="mb-3">
+                                    <p class="text-uppercase fw-bold text-muted mb-2" style="font-size: 0.7rem; letter-spacing: 1px;">Projects</p>
+                                    <div class="row g-3">
+                                        <div class="col-sm-6">
+                                            <img src="assets/projects-cover-photo/SIP-AND-PULSE.jpg" alt="Sip and Pulse" class="project-img">
+                                            <h6 class="fw-bold mb-1 small">Sip and Pulse Cafe Management</h6>
+                                            <p class="text-muted mb-1" style="font-size: 0.7rem;">Jul 2026 | PUP Sto. Tomas</p>
+                                            <a href="https://github.com/B-A-M-V-A-Tech/final-project-webdev-hci-im.github.io.git" class="text-decoration-none fw-bold" style="font-size: 0.75rem;" target="_blank">View GitHub <i class="bi bi-arrow-right"></i></a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <img src="assets/projects-cover-photo/Sto-Tomas-NETWORK-ANALYSIS.jpg" alt="Network Analysis" class="project-img">
+                                            <h6 class="fw-bold mb-1 small">Sto. Tomas - Network Plan</h6>
+                                            <p class="text-muted mb-1" style="font-size: 0.7rem;">Jan 2025 | PUP Sto. Tomas</p>
+                                            <a href="https://drive.google.com/file/d/1uFjiEpPRFBMLAxGL6R2KkrGZUWlwEFfZ/view?usp=drive_link" class="text-decoration-none fw-bold" style="font-size: 0.75rem;" target="_blank">View Document <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="card h-100 border-0 rounded-3 shadow-sm bento-card">
-                                            <img src="assets/activities-cover-photo/WD M01.png" style="width: 100%; height: 90px; object-fit: cover;">
-                                            <div class="card-body p-2">
-                                                <h6 class="fw-bold mb-1 small">Midterm WD M01</h6>
-                                                <p class="small mb-1 text-muted" style="font-size: 0.65rem;">Web Development Module 01</p>
-                                                <a href="WD M01/index.html" class="text-decoration-none fw-bold" style="font-size: 0.7rem;" target="_blank">View <i class="bi bi-arrow-right"></i></a>
+                                </div>
+                                
+                                <hr class="border-secondary opacity-25 my-3">
+
+                                <!-- Activities Subsection -->
+                                <div>
+                                    <p class="text-uppercase fw-bold text-muted mb-2" style="font-size: 0.7rem; letter-spacing: 1px;">Activities</p>
+                                    <div class="row g-3">
+                                        <div class="col-sm-6">
+                                            <div class="card h-100 border-0 rounded-3 shadow-sm bento-card">
+                                                <img src="assets/activities-cover-photo/A02.png" style="width: 100%; height: 90px; object-fit: cover;">
+                                                <div class="card-body p-2">
+                                                    <h6 class="fw-bold mb-1 small">Activity A02</h6>
+                                                    <p class="small mb-1 text-muted" style="font-size: 0.65rem;">Samsung Galaxy S25 Ultra Website</p>
+                                                    <a href="A02/index.html" class="text-decoration-none fw-bold" style="font-size: 0.7rem;" target="_blank">View <i class="bi bi-arrow-right"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="card h-100 border-0 rounded-3 shadow-sm bento-card">
+                                                <img src="assets/activities-cover-photo/WD M01.png" style="width: 100%; height: 90px; object-fit: cover;">
+                                                <div class="card-body p-2">
+                                                    <h6 class="fw-bold mb-1 small">Midterm WD M01</h6>
+                                                    <p class="small mb-1 text-muted" style="font-size: 0.65rem;">Web Development Module 01</p>
+                                                    <a href="WD M01/index.html" class="text-decoration-none fw-bold" style="font-size: 0.7rem;" target="_blank">View <i class="bi bi-arrow-right"></i></a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -366,7 +403,6 @@
                         <div id="projects-activities-content-full" class="d-none">
                             <h4 class="fw-bold mb-3">All Projects</h4>
                             <div class="row g-4 mb-4">
-                                <!-- 1. Sip and Pulse Cafe -->
                                 <div class="col-md-4">
                                     <img src="assets/projects-cover-photo/SIP-AND-PULSE.jpg" alt="Sip and Pulse Cafe" class="project-img-full">
                                     <h6 class="fw-bold mb-1">Sip and Pulse Cafe Management Final Project System</h6>
@@ -374,7 +410,6 @@
                                     <a href="https://github.com/B-A-M-V-A-Tech/final-project-webdev-hci-im.github.io.git" class="text-decoration-none small fw-bold" target="_blank">View GitHub <i class="bi bi-arrow-right"></i></a>
                                 </div>
 
-                                <!-- 2. Sto. Tomas - Analysis of Network Plan -->
                                 <div class="col-md-4">
                                     <img src="assets/projects-cover-photo/Sto-Tomas-NETWORK-ANALYSIS.jpg" alt="Network Analysis" class="project-img-full">
                                     <h6 class="fw-bold mb-1">Sto. Tomas - Analysis of Network Plan</h6>
@@ -382,7 +417,6 @@
                                     <a href="https://drive.google.com/file/d/1uFjiEpPRFBMLAxGL6R2KkrGZUWlwEFfZ/view?usp=drive_link" class="text-decoration-none small fw-bold" target="_blank">View Document <i class="bi bi-arrow-right"></i></a>
                                 </div>
 
-                                <!-- 3. Data Wise - Kubo 8 -->
                                 <div class="col-md-4">
                                     <img src="assets/projects-cover-photo/DATA-WISE-KADAKAMP.jpg" alt="Data Wise" class="project-img-full">
                                     <h6 class="fw-bold mb-1">Data Wise - Kubo 8</h6>
@@ -390,7 +424,6 @@
                                     <a href="https://www.facebook.com/share/p/1XPkDgZG9d/" class="text-decoration-none small fw-bold" target="_blank">View Details <i class="bi bi-arrow-right"></i></a>
                                 </div>
 
-                                <!-- 4. Game Dev: Power-Up Run Treasure Trail -->
                                 <div class="col-md-4">
                                     <img src="assets/projects-cover-photo/POWER-TRAIL.jpg" alt="Power Trail" class="project-img-full">
                                     <h6 class="fw-bold mb-1">Game Dev: "Power-Up Run Treasure Trail"</h6>
@@ -398,7 +431,6 @@
                                     <a href="https://github.com/margamalaluan20/final-projects-in-comprog2-power-trail" class="text-decoration-none small fw-bold" target="_blank">View GitHub <i class="bi bi-arrow-right"></i></a>
                                 </div>
 
-                                <!-- 5. Comprehensive Business Plan: Pawco Tech -->
                                 <div class="col-md-4">
                                     <img src="assets/projects-cover-photo/PAWCO-TECH.jpg" alt="Pawco Tech" class="project-img-full">
                                     <h6 class="fw-bold mb-1">Comprehensive Business Plan: "Pawco Tech"</h6>
@@ -406,7 +438,6 @@
                                     <a href="https://drive.google.com/file/d/1wPd00vzIwFQWvRwDSq0so-ML4LifK3Lg/view?usp=drive_link" class="text-decoration-none small fw-bold" target="_blank">View Document <i class="bi bi-arrow-right"></i></a>
                                 </div>
 
-                                <!-- 6. AI Infomercial -->
                                 <div class="col-md-4">
                                     <img src="assets/projects-cover-photo/AI-SAM.jpg" alt="AI Infomercial" class="project-img-full">
                                     <h6 class="fw-bold mb-1">AI Infomercial (AI: Your Learning Companion by Team S.A.M) (2nd Place)</h6>
@@ -414,7 +445,6 @@
                                     <a href="https://www.facebook.com/share/1BufeCjBpf/" class="text-decoration-none small fw-bold" target="_blank">View Details <i class="bi bi-arrow-right"></i></a>
                                 </div>
 
-                                <!-- 7. Region 4A - Capstone -->
                                 <div class="col-md-4">
                                     <img src="assets/projects-cover-photo/R4A-MYA-CAPSTONE.jpg" alt="Region 4A Capstone" class="project-img-full">
                                     <h6 class="fw-bold mb-1">Region 4A - Capstone (CALABARZON Youth: Journey to Technological Proficiency) (3rd Place)</h6>
@@ -453,23 +483,32 @@
                 <!-- Right Side: About & Experience -->
                 <div class="col-lg-6 d-flex flex-column gap-4">
                     <!-- ABOUT CARD -->
-                    <div class="card bento-card h-100" id="about">
+                    <div class="card bento-card" id="about">
                         <div class="card-header bg-transparent d-flex justify-content-between align-items-center pt-3 border-bottom-0 pb-0">
                             <h5 class="fw-bold text-uppercase mb-0 fs-6">About</h5>
                             <span class="fw-bold view-all-btn" onclick="openSecondPage('About Me', 'about-content')">View All &gt;</span>
                         </div>
                         <div class="card-body small">
+                            <div class="mb-3">
+                                <span id="typing-title" class="fw-bold" style="color: var(--teal-glow); font-size: 0.85rem;"></span><span class="typing-cursor">|</span>
+                            </div>
+
                             <div id="about-content">
                                 <p class="card-text">Hi there, I'm <strong>Marga</strong> — but you can call me <strong>MAGI</strong>. ✨</p>
                                 <p class="card-text">I am a working student, an IT problem-solver, and a passionate scriptwriter. Currently in my second year pursuing a Diploma in Information Technology at PUP Sto. Tomas Campus, I balance my tech education with my role as an Non-Voice ESL Curriculum Scriptwriter at Course Hero Philippines.</p>
-                                <p class="card-text mb-0">To me, coding and writing are two sides of the same coin: every project is just a story waiting to be told. I bring a strong foundation in database management (MySQL, PostgreSQL) and UI/UX design (Figma, Canva), backed by a Cisco Networking Academy certification in IT Customer Support Basics.</p>
+                                <p class="card-text">To me, coding and writing are two sides of the same coin: every project is just a story waiting to be told. I bring a strong foundation in database management (MySQL, PostgreSQL) and UI/UX design (Figma, Canva), backed by a Cisco Networking Academy certification in IT Customer Support Basics.</p>
+                                <p class="card-text">Most recently, I've been channeling my analytical and web development skills into my capstone research project titled <strong>"SalAIn"</strong> as well as <strong>"Sip and Pulse"</strong>—a comprehensive cafe management web solution featuring both a structured Admin Side and an interactive Client Side. It serves as a full-stack cafe ordering and management system complete with a customer-facing website, an admin dashboard, a MySQL database, and Power BI analytics integration.</p>
+                                <p class="card-text mb-0">Beyond the screen, my favorite ways to recharge are writing creative fiction stories, reading books and manhwas, binge watching anime and films, and getting some good sleep.</p>
                             </div>
                             <div id="about-content-full" class="d-none">
+                                <div class="mb-3">
+                                    <span class="fw-bold" style="color: var(--teal-glow); font-size: 1rem;">IT Student | Tech Enthusiast, Passionate Book Writer</span>
+                                </div>
                                 <p class="card-text">Hi there, I'm <strong>Marga</strong> — but you can call me <strong>MAGI</strong>. ✨</p>
                                 <p class="card-text">I am a working student, an IT problem-solver, and a passionate scriptwriter. Currently in my second year pursuing a Diploma in Information Technology at PUP Sto. Tomas Campus, I balance my tech education with my role as an Non-Voice ESL Curriculum Scriptwriter at Course Hero Philippines.</p>
                                 <p class="card-text">To me, coding and writing are two sides of the same coin: every project is just a story waiting to be told. I bring a strong foundation in database management (MySQL, PostgreSQL) and UI/UX design (Figma, Canva), backed by a Cisco Networking Academy certification in IT Customer Support Basics.</p>
-                                <p class="card-text">Most recently, I've been channeling my analytical and web development skills into my final project, <strong>"Sip and Pulse"</strong>—a comprehensive cafe management web solution featuring both a structured Admin Side and an interactive Client Side. It serves as a full-stack cafe ordering and management system complete with a customer-facing website, an admin dashboard, a MySQL database, and Power BI analytics integration.</p>
-                                <p class="card-text">Beyond the screen, my favorite ways to recharge are reading books and manhwas, binge watching anime and films, and getting some good sleep.</p>
+                                <p class="card-text">Most recently, I've been channeling my analytical and web development skills into my capstone research project titled <strong>"SalAIn"</strong> as well as <strong>"Sip and Pulse"</strong>—a comprehensive cafe management web solution featuring both a structured Admin Side and an interactive Client Side. It serves as a full-stack cafe ordering and management system complete with a customer-facing website, an admin dashboard, a MySQL database, and Power BI analytics integration.</p>
+                                <p class="card-text">Beyond the screen, my favorite ways to recharge are writing creative fiction stories, reading books and manhwas, binge watching anime and films, and getting some good sleep.</p>
                             </div>
                         </div>
                     </div>
@@ -610,7 +649,6 @@
                         <div id="skills-content-full" class="d-none">
                             <p class="text-muted fst-italic mb-4">The tools, languages, and systems I use to bring digital concepts to life.</p>
                             
-                            <!-- 1. Programming, Web & Databases -->
                             <div class="mb-4">
                                 <h5 class="fw-bold mb-2" style="color: var(--teal-glow);"><i class="bi bi-laptop me-2"></i>Programming, Web & Databases</h5>
                                 <div class="d-flex flex-wrap gap-2">
@@ -626,7 +664,6 @@
                                 </div>
                             </div>
 
-                            <!-- 2. System & Network Administration -->
                             <div class="mb-4">
                                 <h5 class="fw-bold mb-2" style="color: var(--teal-glow);"><i class="bi bi-gear-fill me-2"></i>System & Network Administration</h5>
                                 <div class="d-flex flex-wrap gap-2">
@@ -643,7 +680,6 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Networking -->
                             <div class="mb-4">
                                 <h5 class="fw-bold mb-2" style="color: var(--teal-glow);"><i class="bi bi-globe me-2"></i>Networking</h5>
                                 <div class="d-flex flex-wrap gap-2">
@@ -659,7 +695,6 @@
                                 </div>
                             </div>
 
-                            <!-- 4. Data Analysis & AI Prep -->
                             <div class="mb-4">
                                 <h5 class="fw-bold mb-2" style="color: var(--teal-glow);"><i class="bi bi-diagram-3-fill me-2"></i>Data Analysis & AI Prep</h5>
                                 <div class="d-flex flex-wrap gap-2">
@@ -677,7 +712,6 @@
                                 </div>
                             </div>
 
-                            <!-- 5. IDE & Design Tools -->
                             <div class="mb-4">
                                 <h5 class="fw-bold mb-2" style="color: var(--teal-glow);"><i class="bi bi-palette-fill me-2"></i>IDE & Design Tools</h5>
                                 <div class="d-flex flex-wrap gap-2">
@@ -690,7 +724,6 @@
                                 </div>
                             </div>
 
-                            <!-- 6. IT Support, QA & Productivity -->
                             <div class="mb-4">
                                 <h5 class="fw-bold mb-2" style="color: var(--teal-glow);"><i class="bi bi-tools me-2"></i>IT Support, QA & Productivity</h5>
                                 <div class="d-flex flex-wrap gap-2">
@@ -750,7 +783,6 @@
                         <!-- FULL VIEW ALL CERTIFICATIONS (2-COLUMN GRID) -->
                         <div id="certs-content-full" class="d-none">
                             <div class="row g-4">
-                                <!-- Left Column -->
                                 <div class="col-md-6">
                                     <div class="mb-4">
                                         <h6 class="fw-bold mb-1">IT Customer Support Basics</h6>
@@ -774,7 +806,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Right Column -->
                                 <div class="col-md-6">
                                     <div class="mb-4">
                                         <h6 class="fw-bold mb-1">Governance Begins Within: Cultivating Ethical and Emotionally Intelligent Leadership in the Philippine Public Sector</h6>
@@ -813,7 +844,6 @@
                         </div>
                         <div class="card-body small">
                             <ul class="list-group list-group-flush bg-transparent">
-                                <!-- 1. SK Secretary -->
                                 <li class="list-group-item bg-transparent px-0 border-0 mb-3 d-flex align-items-start gap-2">
                                     <img src="assets/organization-cover-photo/SK.jpg" class="rounded border border-secondary flex-shrink-0" style="width: 45px; height: 45px; object-fit:cover; cursor: pointer;" alt="SK" onclick="openImageViewer(this.src)">
                                     <div>
@@ -823,7 +853,6 @@
                                     </div>
                                 </li>
 
-                                <!-- 2. Film Development Council of the Philippines -->
                                 <li class="list-group-item bg-transparent px-0 border-0 mb-3 d-flex align-items-start gap-2">
                                     <img src="assets/organization-cover-photo/FDCP.jpg" class="rounded border border-secondary flex-shrink-0" style="width: 45px; height: 45px; object-fit:cover; cursor: pointer;" alt="FDCP" onclick="openImageViewer(this.src)" onerror="this.src='assets/organization-cover-photo/FDCP.png'">
                                     <div>
@@ -833,7 +862,6 @@
                                     </div>
                                 </li>
 
-                                <!-- 3. KadaKampers -->
                                 <li class="list-group-item bg-transparent px-0 border-0 mb-3 d-flex align-items-start gap-2">
                                     <img src="assets/organization-cover-photo/kadakareer.jpg" class="rounded border border-secondary flex-shrink-0" style="width: 45px; height: 45px; object-fit:cover; cursor: pointer;" alt="KadaKareer" onclick="openImageViewer(this.src)">
                                     <div>
@@ -846,7 +874,6 @@
                                     </div>
                                 </li>
 
-                                <!-- 4. Microsoft Youth Ambassador -->
                                 <li class="list-group-item bg-transparent px-0 border-0 mb-0 d-flex align-items-start gap-2">
                                     <img src="assets/organization-cover-photo/MYA.jpg" class="rounded border border-secondary flex-shrink-0" style="width: 45px; height: 45px; object-fit:cover; cursor: pointer;" alt="MYA" onclick="openImageViewer(this.src)">
                                     <div>
@@ -863,7 +890,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-6 d-flex flex-column gap-4">
+                <div class="col-lg-6 d-flex flex-column gap-3">
                     <div class="card bento-card">
                         <div class="card-header bg-transparent pt-3 border-bottom-0 pb-0">
                             <h5 class="fw-bold text-uppercase mb-0 text-center fs-6">Social Links</h5>
@@ -876,12 +903,13 @@
                         </div>
                     </div>
 
-                    <div class="card bento-card flex-grow-1" id="contacts">
-                        <div class="card-header bg-transparent pt-3 border-bottom-0 pb-0">
+                    <!-- CONTACTS CARD -->
+                    <div class="card bento-card flex-grow-1 d-flex flex-column justify-content-center" id="contacts">
+                        <div class="card-header bg-transparent pt-2 border-bottom-0 pb-0">
                             <h5 class="fw-bold text-uppercase mb-0 fs-6">Contacts</h5>
                         </div>
-                        <div class="card-body small">
-                            <p class="mb-1"><i class="bi bi-telephone-fill me-2" style="color: var(--teal-glow);"></i><strong>Call:</strong> +63 9166623740</p>
+                        <div class="card-body small py-2">
+                            <p class="mb-2"><i class="bi bi-telephone-fill me-2" style="color: var(--teal-glow);"></i><strong>Call:</strong> +63 9166623740</p>
                             <p class="mb-0"><i class="bi bi-envelope-fill me-2" style="color: var(--teal-glow);"></i><strong>Email:</strong> margamalaluan20@gmail.com</p>
                         </div>
                     </div>
@@ -897,49 +925,47 @@
                         </div>
                         <div class="card-body pt-0 px-0">
                             <div class="gallery-wrapper">
-                                <button class="gallery-nav-btn left-btn" onclick="scrollGallery(-300)"><i class="bi bi-chevron-left"></i></button>
                                 <div class="horizontal-scroll" id="gallery-scroll-container">
-                                    <a href="assets/gallery/gallery1.jpg"><img src="assets/gallery/gallery1.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery2.jpg"><img src="assets/gallery/gallery2.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery3.jpg"><img src="assets/gallery/gallery3.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery4.jpg"><img src="assets/gallery/gallery4.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery5.jpg"><img src="assets/gallery/gallery5.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery6.jpg"><img src="assets/gallery/gallery6.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery7.jpg"><img src="assets/gallery/gallery7.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery8.jpg"><img src="assets/gallery/gallery8.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery9.jpg"><img src="assets/gallery/gallery9.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery10.jpg"><img src="assets/gallery/gallery10.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery11.jpg"><img src="assets/gallery/gallery11.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery12.jpg"><img src="assets/gallery/gallery12.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery13.jpg"><img src="assets/gallery/gallery13.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery14.jpg"><img src="assets/gallery/gallery14.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery15.jpg"><img src="assets/gallery/gallery15.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery16.jpg"><img src="assets/gallery/gallery16.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery17.jpg"><img src="assets/gallery/gallery17.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery18.jpg"><img src="assets/gallery/gallery18.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery19.jpg"><img src="assets/gallery/gallery19.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery20.jpg"><img src="assets/gallery/gallery20.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery21.jpg"><img src="assets/gallery/gallery21.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery22.jpg"><img src="assets/gallery/gallery22.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery23.jpg"><img src="assets/gallery/gallery23.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery24.jpg"><img src="assets/gallery/gallery24.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery25.jpg"><img src="assets/gallery/gallery25.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery26.jpg"><img src="assets/gallery/gallery26.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery27.jpg"><img src="assets/gallery/gallery27.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery28.jpg"><img src="assets/gallery/gallery28.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery29.jpg"><img src="assets/gallery/gallery29.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery30.jpg"><img src="assets/gallery/gallery30.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery31.jpg"><img src="assets/gallery/gallery31.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery32.jpg"><img src="assets/gallery/gallery32.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery33.jpg"><img src="assets/gallery/gallery33.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery34.jpg"><img src="assets/gallery/gallery34.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery35.jpg"><img src="assets/gallery/gallery35.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery36.jpg"><img src="assets/gallery/gallery36.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery37.jpg"><img src="assets/gallery/gallery37.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery38.jpg"><img src="assets/gallery/gallery38.jpg" alt="Gallery"></a>
-                                    <a href="assets/gallery/gallery39.jpg"><img src="assets/gallery/gallery39.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery1.jpg')"><img src="assets/gallery/gallery1.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery2.jpg')"><img src="assets/gallery/gallery2.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery3.jpg')"><img src="assets/gallery/gallery3.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery4.jpg')"><img src="assets/gallery/gallery4.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery5.jpg')"><img src="assets/gallery/gallery5.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery6.jpg')"><img src="assets/gallery/gallery6.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery7.jpg')"><img src="assets/gallery/gallery7.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery8.jpg')"><img src="assets/gallery/gallery8.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery9.jpg')"><img src="assets/gallery/gallery9.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery10.jpg')"><img src="assets/gallery/gallery10.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery11.jpg')"><img src="assets/gallery/gallery11.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery12.jpg')"><img src="assets/gallery/gallery12.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery13.jpg')"><img src="assets/gallery/gallery13.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery14.jpg')"><img src="assets/gallery/gallery14.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery15.jpg')"><img src="assets/gallery/gallery15.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery16.jpg')"><img src="assets/gallery/gallery16.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery17.jpg')"><img src="assets/gallery/gallery17.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery18.jpg')"><img src="assets/gallery/gallery18.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery19.jpg')"><img src="assets/gallery/gallery19.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery20.jpg')"><img src="assets/gallery/gallery20.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery21.jpg')"><img src="assets/gallery/gallery21.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery22.jpg')"><img src="assets/gallery/gallery22.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery23.jpg')"><img src="assets/gallery/gallery23.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery24.jpg')"><img src="assets/gallery/gallery24.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery25.jpg')"><img src="assets/gallery/gallery25.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery26.jpg')"><img src="assets/gallery/gallery26.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery27.jpg')"><img src="assets/gallery/gallery27.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery28.jpg')"><img src="assets/gallery/gallery28.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery29.jpg')"><img src="assets/gallery/gallery29.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery30.jpg')"><img src="assets/gallery/gallery30.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery31.jpg')"><img src="assets/gallery/gallery31.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery32.jpg')"><img src="assets/gallery/gallery32.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery33.jpg')"><img src="assets/gallery/gallery33.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery34.jpg')"><img src="assets/gallery/gallery34.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery35.jpg')"><img src="assets/gallery/gallery35.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery36.jpg')"><img src="assets/gallery/gallery36.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery37.jpg')"><img src="assets/gallery/gallery37.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery38.jpg')"><img src="assets/gallery/gallery38.jpg" alt="Gallery"></a>
+                                    <a href="javascript:void(0)" onclick="openImageViewer('assets/gallery/gallery39.jpg')"><img src="assets/gallery/gallery39.jpg" alt="Gallery"></a>
                                 </div>
-                                <button class="gallery-nav-btn right-btn" onclick="scrollGallery(300)"><i class="bi bi-chevron-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -972,6 +998,48 @@
             htmlElement.setAttribute('data-bs-theme', newTheme);
         }
 
+        /* Typing Effect Function */
+        const typingText = "IT Student | Tech Enthusiast, Passionate Book Writer";
+        let typingIndex = 0;
+        function typeWriter() {
+            const target = document.getElementById("typing-title");
+            if (target && typingIndex < typingText.length) {
+                target.innerHTML += typingText.charAt(typingIndex);
+                typingIndex++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+
+        /* Continuous Auto-Scrolling Advertisement Effect */
+        let autoScrollTimer;
+        function startGalleryAutoScroll() {
+            const container = document.getElementById('gallery-scroll-container');
+            if (!container) return;
+            
+            autoScrollTimer = setInterval(() => {
+                if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 2) {
+                    container.scrollLeft = 0;
+                } else {
+                    container.scrollLeft += 1;
+                }
+            }, 20);
+        }
+
+        function stopGalleryAutoScroll() {
+            clearInterval(autoScrollTimer);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            typeWriter();
+
+            const galleryContainer = document.getElementById('gallery-scroll-container');
+            if (galleryContainer) {
+                startGalleryAutoScroll();
+                galleryContainer.addEventListener('mouseenter', stopGalleryAutoScroll);
+                galleryContainer.addEventListener('mouseleave', startGalleryAutoScroll);
+            }
+        });
+
         function openSecondPage(title, contentId) {
             document.getElementById('main-dashboard').classList.add('d-none');
             document.getElementById('second-dashboard').classList.remove('d-none');
@@ -980,32 +1048,35 @@
             document.getElementById('second-page-content').innerHTML = fullContent ? fullContent.innerHTML : document.getElementById(contentId).innerHTML;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
         function closeSecondPage() {
             document.getElementById('second-dashboard').classList.add('d-none');
             document.getElementById('main-dashboard').classList.remove('d-none');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        function scrollGallery(amount) {
-            const container = document.getElementById('gallery-scroll-container');
-            if (container) { container.scrollBy({ left: amount, behavior: 'smooth' }); }
-        }
+
+        /* Image Viewer Lightbox Modal with X Close Button */
         function openImageViewer(src) {
             const viewer = document.getElementById('imageViewer');
             const fullImg = document.getElementById('fullImage');
             viewer.style.display = "flex";
             fullImg.src = src;
             document.body.style.overflow = 'hidden';
+            stopGalleryAutoScroll();
         }
+
         function closeImageViewer() {
             const viewer = document.getElementById('imageViewer');
             viewer.style.display = "none";
             document.body.style.overflow = 'auto';
+            startGalleryAutoScroll();
         }
     </script>
 
+    <!-- Modal Viewer with X Close Button -->
     <div id="imageViewer" class="image-viewer-overlay" onclick="closeImageViewer()">
-        <span class="close-viewer">&times;</span>
-        <img class="image-viewer-content" id="fullImage">
+        <span class="close-viewer" onclick="closeImageViewer()">&times;</span>
+        <img class="image-viewer-content" id="fullImage" onclick="event.stopPropagation()">
     </div>
 </body>
 </html>
