@@ -32,7 +32,7 @@
             font-family: 'Fira Code', monospace, Arial, sans-serif;
             background-color: var(--bg-main) !important;
             color: var(--text-main) !important;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: 0.5s;
             scroll-behavior: smooth;
         }
 
@@ -40,14 +40,43 @@
             background-color: var(--bg-card) !important;
             border-bottom: 1px solid var(--teal-border) !important;
             box-shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
+            transition: 0.5s;
+        }
+        .navbar-collapse {
+            transition: 0.5s;
         }
         .navbar-brand, .nav-link {
             color: var(--teal-glow) !important;
             font-family: 'Courier Prime', monospace;
+            transition: 0.5s;
         }
         .nav-link:hover {
             color: var(--text-main) !important;
             text-shadow: 0 0 8px var(--teal-glow);
+        }
+
+        /* Mobile View Bottom Navigation */
+        @media (max-width: 991.98px) {
+            body {
+                padding-bottom: 80px;
+            }
+            .navbar {
+                position: fixed !important;
+                top: auto !important;
+                bottom: 0 !important;
+                left: 0;
+                right: 0;
+                width: 100%;
+                z-index: 1030;
+                border-top: 1px solid var(--teal-border) !important;
+                border-bottom: none !important;
+                box-shadow: 0 -4px 15px rgba(0, 188, 212, 0.15);
+            }
+            .navbar-collapse {
+                max-height: 60vh;
+                overflow-y: auto;
+                padding-bottom: 10px;
+            }
         }
 
         .bento-card {
@@ -102,6 +131,7 @@
             color: var(--teal-glow) !important;
             border-color: var(--teal-glow) !important;
             background-color: transparent !important;
+            transition: 0.5s;
         }
         .btn-outline-dark:hover, .btn-outline-primary:hover { 
             background-color: var(--teal-glow) !important; 
@@ -174,6 +204,7 @@
             cursor: pointer;
             font-size: 0.85rem;
             color: var(--teal-glow) !important;
+            transition: 0.5s;
         }
         .view-all-btn:hover { text-decoration: underline; }
 
@@ -193,7 +224,7 @@
             margin-bottom: 4px;
         }
 
-        a { color: var(--teal-glow); }
+        a { color: var(--teal-glow); transition: 0.5s; }
         a:hover { color: var(--text-main); }
         .text-muted { color: #8b9bb4 !important; }
 
@@ -222,6 +253,7 @@
             justify-content: center; 
             align-items: center; 
             backdrop-filter: blur(5px);
+            transition: 0.5s;
         }
         .image-viewer-content { 
             max-width: 90%; 
