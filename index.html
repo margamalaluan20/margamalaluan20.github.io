@@ -61,6 +61,63 @@
             scroll-behavior: smooth;
         }
 
+        /* --- FIREWORKS LOADING OVERLAY STYLES --- */
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #070b14;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 1s ease, visibility 1s ease;
+            overflow: hidden;
+        }
+
+        #fireworksCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .welcome-text-container {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            animation: fadeInZoom 1.2s ease-out;
+        }
+
+        .welcome-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--teal-glow);
+            text-shadow: 0 0 15px var(--teal-glow), 0 0 30px var(--teal-glow);
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: clamp(0.85rem, 2vw, 1.2rem);
+            color: #e0e6ed;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeInZoom {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
         .navbar {
             background-color: var(--bg-card) !important;
             border-bottom: 1px solid var(--teal-border) !important;
@@ -358,6 +415,15 @@
     </style>
 </head>
 <body class="bg-body-tertiary">
+
+    <!-- WELCOME FIREWORKS OVERLAY SCREEN -->
+    <div id="welcome-overlay">
+        <canvas id="fireworksCanvas"></canvas>
+        <div class="welcome-text-container">
+            <h1 class="welcome-title">Welcome to MAGI's Digital Workspace!</h1>
+            <p class="welcome-subtitle">Loading Interactive Portfolio...</p>
+        </div>
+    </div>
 
     <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
         <div class="container-fluid px-4">
@@ -1090,6 +1156,101 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        /* --- FIREWORKS ANIMATION LOGIC --- */
+        function initFireworks() {
+            const canvas = document.getElementById('fireworksCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animId;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            class Particle {
+                constructor(x, y, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.color = color;
+                    this.radius = Math.random() * 3 + 1;
+                    this.velocity = {
+                        x: (Math.random() - 0.5) * 7,
+                        y: (Math.random() - 0.5) * 7
+                    };
+                    this.alpha = 1;
+                    this.decay = Math.random() * 0.018 + 0.008;
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                update() {
+                    this.x += this.velocity.x;
+                    this.y += this.velocity.y;
+                    this.velocity.y += 0.04;
+                    this.alpha -= this.decay;
+                }
+            }
+
+            function createFirework(x, y) {
+                const colors = ['#00BCD4', '#00e5ff', '#ffffff', '#ffd700', '#ff4081'];
+                for (let i = 0; i < 35; i++) {
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particles.push(new Particle(x, y, color));
+                }
+            }
+
+            function animate() {
+                ctx.fillStyle = 'rgba(7, 11, 20, 0.25)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach((p, idx) => {
+                    if (p.alpha > 0) {
+                        p.update();
+                        p.draw();
+                    } else {
+                        particles.splice(idx, 1);
+                    }
+                });
+
+                animId = requestAnimationFrame(animate);
+            }
+
+            let fireworkInterval = setInterval(() => {
+                const x = Math.random() * (canvas.width * 0.8) + (canvas.width * 0.1);
+                const y = Math.random() * (canvas.height * 0.5) + (canvas.height * 0.1);
+                createFirework(x, y);
+            }, 250);
+
+            animate();
+
+            // Auto-hide overlay after 3 seconds
+            setTimeout(() => {
+                clearInterval(fireworkInterval);
+                const overlay = document.getElementById('welcome-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    overlay.style.visibility = 'hidden';
+                    setTimeout(() => {
+                        cancelAnimationFrame(animId);
+                    }, 1000);
+                }
+            }, 3000);
+        }
+
         function toggleTheme() {
             const htmlElement = document.documentElement;
             const currentTheme = htmlElement.getAttribute('data-bs-theme');
@@ -1129,6 +1290,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            initFireworks();
             typeWriter();
 
             const galleryContainer = document.getElementById('gallery-scroll-container');
