@@ -55,7 +55,7 @@
             text-shadow: 0 0 8px var(--teal-glow);
         }
 
-        /* Mobile View Bottom Navigation */
+        /* Mobile View Bottom Navigation & Floating Right Glass Menu */
         @media (max-width: 991.98px) {
             body {
                 padding-bottom: 80px;
@@ -72,10 +72,43 @@
                 border-bottom: none !important;
                 box-shadow: 0 -4px 15px rgba(0, 188, 212, 0.15);
             }
+            
+            /* Floating Glassmorphism Side Menu */
             .navbar-collapse {
-                max-height: 60vh;
+                position: fixed;
+                bottom: 75px;
+                right: 15px;
+                width: 240px;
+                max-height: 65vh;
                 overflow-y: auto;
-                padding-bottom: 10px;
+                background: rgba(15, 22, 35, 0.85) !important;
+                backdrop-filter: blur(12px) saturate(180%);
+                -webkit-backdrop-filter: blur(12px) saturate(180%);
+                border: 1px solid var(--teal-border) !important;
+                border-radius: 16px;
+                padding: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 188, 212, 0.2);
+                z-index: 1040;
+            }
+
+            html[data-bs-theme="light"] .navbar-collapse {
+                background: rgba(255, 255, 255, 0.88) !important;
+            }
+
+            .navbar-nav {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .nav-link {
+                padding: 8px 12px !important;
+                border-radius: 8px;
+                transition: background 0.2s ease;
+            }
+
+            .nav-link:hover {
+                background: rgba(0, 188, 212, 0.15);
             }
         }
 
@@ -309,16 +342,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-6">
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="closeSecondPage()">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about" onclick="closeSecondPage()">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#skills" onclick="closeSecondPage()">Skills</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#experience" onclick="closeSecondPage()">Experience</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#projects" onclick="closeSecondPage()">Projects</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#certifications" onclick="closeSecondPage()">Certifications</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#activities" onclick="closeSecondPage()">Activities</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contacts" onclick="closeSecondPage()">Contacts</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="handleNavClick()">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about" onclick="handleNavClick()">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills" onclick="handleNavClick()">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience" onclick="handleNavClick()">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects" onclick="handleNavClick()">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#certifications" onclick="handleNavClick()">Certifications</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#activities" onclick="handleNavClick()">Activities</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contacts" onclick="handleNavClick()">Contacts</a></li>
                 </ul>
-                <button class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold" onclick="toggleTheme()">
+                <button class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold my-2 my-lg-0" onclick="toggleTheme()">
                     <i class="bi bi-moon-stars-fill me-1"></i> Mode
                 </button>
             </div>
@@ -1081,6 +1114,17 @@
             }
         });
 
+        function handleNavClick() {
+            closeSecondPage();
+            if (window.innerWidth < 992) {
+                const navbarCollapse = document.getElementById('navbarNav');
+                if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                    const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                    if (bsCollapse) bsCollapse.hide();
+                }
+            }
+        }
+
         function openSecondPage(title, contentId) {
             document.getElementById('main-dashboard').classList.add('d-none');
             document.getElementById('second-dashboard').classList.remove('d-none');
@@ -1096,7 +1140,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* Image Viewer Lightbox Modal with X Close Button */
+        /* Image Viewer Lightbox Modal with X Close Button Overlaying Image */
         function openImageViewer(src) {
             const viewer = document.getElementById('imageViewer');
             const fullImg = document.getElementById('fullImage');
