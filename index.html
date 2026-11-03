@@ -240,7 +240,7 @@
             50% { opacity: 0; }
         }
 
-        /* Image Viewer Overlay & Close Button Styles */
+        /* Image Viewer Overlay & Top-Right Image Overlay Button */
         .image-viewer-overlay {
             display: none; 
             position: fixed; 
@@ -254,9 +254,18 @@
             align-items: center; 
             backdrop-filter: blur(5px);
             transition: 0.5s;
+            padding: 15px;
+        }
+        .image-viewer-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 90%;
+            max-height: 85vh;
         }
         .image-viewer-content { 
-            max-width: 90%; 
+            display: block;
+            width: 100%;
+            max-width: 100%; 
             max-height: 85vh; 
             border-radius: 10px; 
             border: 2px solid var(--teal-glow);
@@ -265,18 +274,18 @@
         }
         .close-viewer { 
             position: absolute; 
-            top: 25px; 
-            right: 35px; 
+            top: 10px; 
+            right: 10px; 
             color: #ffffff; 
-            font-size: 45px; 
+            font-size: 28px; 
             font-weight: bold;
             cursor: pointer; 
             line-height: 1;
-            transition: color 0.2s ease, transform 0.2s ease;
+            transition: color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
             z-index: 3100;
-            background: rgba(0, 0, 0, 0.5);
-            width: 50px;
-            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -286,7 +295,7 @@
         .close-viewer:hover {
             color: var(--teal-glow);
             transform: scale(1.1);
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.95);
         }
     </style>
 </head>
@@ -886,7 +895,7 @@
                                 </li>
 
                                 <li class="list-group-item bg-transparent px-0 border-0 mb-3 d-flex align-items-start gap-2">
-                                    <img src="C:\Users\marga\OneDrive\Desktop\GitHub Student Portfolio\margamalaluan20.github.io\assets\organization-cover-photo\FDCP.avif" class="rounded border border-secondary flex-shrink-0" style="width: 45px; height: 45px; object-fit:cover; cursor: pointer;" alt="FDCP" onclick="openImageViewer(this.src)" onerror="this.src='assets/organization-cover-photo/FDCP.png'">
+                                    <img src="assets/organization-cover-photo/FDCP.jpg" class="rounded border border-secondary flex-shrink-0" style="width: 45px; height: 45px; object-fit:cover; cursor: pointer;" alt="FDCP" onclick="openImageViewer(this.src)" onerror="this.src='assets/organization-cover-photo/FDCP.png'">
                                     <div>
                                         <strong class="small d-block fw-bold">Film Development Council of the Philippines</strong>
                                         <span class="text-muted d-block" style="font-size: 0.7rem;">Workshop Participant | Oct 2026</span>
@@ -1105,10 +1114,12 @@
         }
     </script>
 
-    <!-- Modal Viewer with X Close Button -->
+    <!-- Modal Viewer with X Close Button Overlaying Top-Right of Image -->
     <div id="imageViewer" class="image-viewer-overlay" onclick="closeImageViewer()">
-        <span class="close-viewer" onclick="closeImageViewer()">&times;</span>
-        <img class="image-viewer-content" id="fullImage" onclick="event.stopPropagation()">
+        <div class="image-viewer-wrapper" onclick="event.stopPropagation()">
+            <span class="close-viewer" onclick="closeImageViewer()">&times;</span>
+            <img class="image-viewer-content" id="fullImage" alt="Gallery Image">
+        </div>
     </div>
 </body>
 </html>
